@@ -44,11 +44,21 @@ app.post("/articles", function (req, res) {
     content: req.body.content,
   });
 
-  newArticle.save(function (err) {
+  newArticle.save((err) => {
     if (err) {
       res.send(err);
     } else {
       res.send("Success");
+    }
+  });
+});
+
+app.delete("/articles", function (req, res) {
+  Article.deleteMany((err) => {
+    if (err) {
+      res.send(err);
+    } else {
+      res.send("Successfully deleted articles");
     }
   });
 });
