@@ -78,7 +78,7 @@ app
     });
   })
   .put((req, res) => {
-    Article.update(
+    Article.updateOne(
       { title: req.params.articleTitle },
       { title: req.body.title, content: req.body.content },
       { overwrite: true },
@@ -90,6 +90,30 @@ app
         }
       }
     );
+  })
+  .patch((req, res) => {
+    Article.updateOne(
+      { title: req.params.articleTitle },
+      { $set: req.body },
+      (err) => {
+        if (err) {
+          res.send(err);
+        } else {
+          res.send("Succesfully updated the article");
+        }
+      }
+    );
+  })
+  .delete((req, res) => {
+    Article.deleteOne(
+      { title: req.params.articleTitle }, 
+      (err) => {
+      if (err) {
+        res.send(err);
+      } else {
+        res.send("Succesfully deleted the article");
+      }
+    });
   });
 
 app.listen(3000, function () {
