@@ -26,39 +26,52 @@ const article = new Article({
   content: "DOM is short for Document Object Model",
 });
 
-//article.save();
+//general route
+app
+  .route("/articles")
+  .get((req, res) => {
+    Article.find((err, articles) => {
+      if (err) {
+        console.log(err);
+      } else {
+        //console.log(res.statusCode);
+        res.send([res.statusCode, articles]);
+      }
+    });
+  })
+  .post((req, res) => {
+    const newArticle = new Article({
+      title: req.body.title,
+      content: req.body.content,
+    });
 
-app.get("/articles", function (req, res) {
-  Article.find(function (err, articles) {
-    if (err) {
-      console.log(err);
-    } else {
-      res.send(articles);
-    }
+    newArticle.save((err) => {
+      if (err) {
+        res.send(err);
+      } else {
+        res.send("Success");
+      }
+    });
+  })
+  .delete((req, res) => {
+    Article.deleteMany((err) => {
+      if (err) {
+        res.send(err);
+      } else {
+        res.send("Successfully deleted articles");
+      }
+    });
   });
-});
+////////general route end
 
-app.post("/articles", function (req, res) {
-  const newArticle = new Article({
-    title: req.body.title,
-    content: req.body.content,
-  });
+//specific article route
 
-  newArticle.save((err) => {
-    if (err) {
-      res.send(err);
+app.route("/articles/:articleTitle").get((req, res) => {
+  Article.findOne({ title: req.params.articleTitle }, (err, foundArticle) => {
+    if (foundArticle) {
+      res.send(foundArticle);
     } else {
-      res.send("Success");
-    }
-  });
-});
-
-app.delete("/articles", function (req, res) {
-  Article.deleteMany((err) => {
-    if (err) {
-      res.send(err);
-    } else {
-      res.send("Successfully deleted articles");
+      res.send("No articles matching the parameters");
     }
   });
 });
